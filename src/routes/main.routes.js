@@ -20,7 +20,7 @@ router.get('/getAllProducts', async (req, res) => {
     //PRODUCTOS FUNCTIONS
     const db = await connect()
     if (true) {
-        let productos = await db.collection('productos').find().toArray();
+        let productos = await db.collection('productos').find({negocioId:req.query.negocio}).toArray();
         res.send(productos)
     } else {
         res.send(401)
@@ -52,6 +52,32 @@ router.put('/editProduct', async (req, res)=>{
     }else{
         res.sendStatus(401)
     }
+})
+
+//NEGOCIOS
+router.post('/registrarNegocio', async (req, res) => {
+    const db = await connect()
+    if (req.body.negocio) {
+        await db.collection('negocios').insertOne(req.body.negocio);
+        res.send('negocio creado')
+    } else {
+        res.send(401)
+    }
+
+
+})
+
+router.get('/getNegocios', async (req, res) => {
+    //PRODUCTOS FUNCTIONS
+    const db = await connect()
+    if (req.query.propietario) {
+        let negocios = await db.collection('negocios').find({propietario:req.query.propietario}).toArray();
+        res.send(negocios)
+    } else {
+        res.send(401)
+    }
+
+
 })
 
 export default router

@@ -5,6 +5,8 @@ const bodyParser = require('body-parser')
 
 import {connect} from './database'
 import Routes from './routes/main.routes'
+import Auth from './routes/auth.routes'
+
 //settings
 app.set('port', process.env.PORT || 3000)
 
@@ -25,6 +27,8 @@ app.use((req, res, next) => {
 
 //RUTAS
 app.use('/api',Routes)
+app.use('/api',Auth)
+
 
 async function main(){
     await app.listen(app.get('port'))
