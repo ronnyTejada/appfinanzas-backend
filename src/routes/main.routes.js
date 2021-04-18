@@ -68,11 +68,62 @@ router.post('/registrarNegocio', async (req, res) => {
 })
 
 router.get('/getNegocios', async (req, res) => {
-    //PRODUCTOS FUNCTIONS
+    
     const db = await connect()
     if (req.query.propietario) {
         let negocios = await db.collection('negocios').find({propietario:req.query.propietario}).toArray();
         res.send(negocios)
+    } else {
+        res.send(401)
+    }
+
+
+})
+
+//HISTORIAL FUNCTIONS
+router.post('/pedidoToHistory', async (req, res) => {
+    const db = await connect()
+    console.log(req.body.pedido)
+    if (req.body.pedido) {
+        req.body.pedido.map(async p=>{
+            await db.collection('historial').insertOne(p);
+        })
+        res.send('pedidos en historial')
+    } else {
+        res.send(401)
+    }
+
+
+})
+
+router.get('/getPedidosFromHistory', async (req, res) => {
+    
+    const db = await connect()
+    if (req.query.negocio) {
+        let pedidos= await db.collection('historial').find({negocioId:req.query.negocio}).toArray();
+        res.send(pedidos)
+    } else {
+        res.send(401)
+    }
+
+
+})
+
+//CLIENTES FUNCTIONS
+router.post('/postCliente', async (req, res) => {
+    const db = await connect()
+    if (req.body.cliente) {
+        let result = await db.collection('clientes').findOne({id:req.body.cliente.id})
+        //si existe modificar compras
+        if(result){
+            result.compras=req.body.cliente.compras
+            await db.collection('clientes').update({ id: req.body.cliente.id },result) 
+
+        }else{
+            await db.collection('clientes').insertOne(req.body.cliente);
+
+        }
+        res.send('pedidos en historial')
     } else {
         res.send(401)
     }
